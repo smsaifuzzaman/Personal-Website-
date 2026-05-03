@@ -7,6 +7,8 @@ import bgVideo from "./assets/main1.mp4";
 import facebookProfile from "./assets/facebook-profile.jpg";
 import linkedinProfile from "./assets/linkedin-profile.jpg";
 import instagramProfile from "./assets/instagram-profile.webp";
+import PersonaKeyHints from "./PersonaKeyHints";
+import { openExternal } from "./linkUtils";
 
 const SOCIAL_SECTIONS = [
   {
@@ -62,11 +64,6 @@ export default function Socials() {
   }, []);
 
   useEffect(() => {
-    setActive(0);
-    setHovered(null);
-  }, []);
-
-  useEffect(() => {
     const onKey = (event) => {
       if (event.key === "ArrowUp") {
         event.preventDefault();
@@ -90,7 +87,7 @@ export default function Socials() {
 
       if (event.key === "Enter") {
         event.preventDefault();
-        window.open(SOCIAL_SECTIONS[active].profileUrl, "_blank", "noopener,noreferrer");
+        openExternal(SOCIAL_SECTIONS[active].profileUrl);
       }
 
       if (event.key === "ArrowLeft" || event.key === "Escape" || event.key === "Backspace") {
@@ -107,11 +104,9 @@ export default function Socials() {
 
   return (
     <div id="menu-screen">
-      <video src={bgVideo} autoPlay loop muted playsInline />
+      <video src={bgVideo} autoPlay loop muted playsInline preload="metadata" />
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@300;400;600&display=swap');
-
         .social-root {
           position: absolute;
           inset: 0;
@@ -553,7 +548,7 @@ export default function Socials() {
               <button
                 type="button"
                 className="social-open-profile"
-                onClick={() => window.open(activeSection.profileUrl, "_blank", "noopener,noreferrer")}
+                onClick={() => openExternal(activeSection.profileUrl)}
               >
                 OPEN PROFILE
               </button>
@@ -562,12 +557,18 @@ export default function Socials() {
         </section>
       </div>
 
-      <div className={`social-footer${mounted ? " mounted" : ""}`}>
-        <div className="social-footer-row"><span className="social-footer-key">UP/DN</span><span>SELECT</span></div>
-        <div className="social-footer-row"><span className="social-footer-key">CLICK</span><span>SHOW DETAILS</span></div>
-        <div className="social-footer-row"><span className="social-footer-key">ENTER</span><span>OPEN PLATFORM</span></div>
-        <div className="social-footer-row"><span className="social-footer-key">ESC</span><span>BACK</span></div>
-      </div>
+      <PersonaKeyHints
+        mounted={mounted}
+        rootClass="social-footer"
+        rowClass="social-footer-row"
+        keyClass="social-footer-key"
+        rows={[
+          { keyLabel: "UP/DN", label: "SELECT" },
+          { keyLabel: "CLICK", label: "SHOW DETAILS" },
+          { keyLabel: "ENTER", label: "OPEN PLATFORM" },
+          { keyLabel: "ESC", label: "BACK" },
+        ]}
+      />
     </div>
   );
 }

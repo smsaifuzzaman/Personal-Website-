@@ -1,27 +1,28 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import menuVideo from './assets/Mainn.mp4'
-import main1 from './assets/main1.mp4'
-import main2 from './assets/main2.mp4'
-import main3 from './assets/main3.mp4'
 import bgmTrack from './assets/bgm.mp3'
 import P3Menu from './P3Menu'
-import VideoPage from './VideoPage'
-import ResumePage from './ResumePage'
 import PageTransition from './PageTransition'
-import Socials from './Socials'
-import AboutMe from './AboutMe'
 import './App.css'
+
+const AboutMe = lazy(() => import('./AboutMe'))
+const ResumePage = lazy(() => import('./ResumePage'))
+const Socials = lazy(() => import('./Socials'))
 
 function MenuScreen() {
   const navigate = useNavigate()
   return (
     <div id="menu-screen">
-      <video src={menuVideo} autoPlay loop muted playsInline />
+      <video src={menuVideo} autoPlay loop muted playsInline preload="metadata" />
       <P3Menu onNavigate={(page) => navigate(`/${page}`)} />
     </div>
   )
+}
+
+function LazyPage({ children }) {
+  return <Suspense fallback={null}>{children}</Suspense>
 }
 
 function AnimatedRoutes() {
@@ -33,13 +34,13 @@ function AnimatedRoutes() {
           <PageTransition><MenuScreen /></PageTransition>
         } />
         <Route path="/about" element={
-          <PageTransition variant="about"><AboutMe /></PageTransition>
+          <PageTransition variant="about"><LazyPage><AboutMe /></LazyPage></PageTransition>
         } />
         <Route path="/resume" element={
-          <PageTransition><ResumePage src={main2} /></PageTransition>
+          <PageTransition variant="resume"><LazyPage><ResumePage /></LazyPage></PageTransition>
         } />
         <Route path="/socials" element={
-          <PageTransition variant="socials"><Socials /></PageTransition>
+          <PageTransition variant="socials"><LazyPage><Socials /></LazyPage></PageTransition>
         } />
       </Routes>
     </AnimatePresence>
@@ -106,7 +107,7 @@ export default function App() {
 
   return (
     <>
-      <audio ref={audioRef} src={bgmTrack} loop preload="auto" />
+      <audio ref={audioRef} src={bgmTrack} loop preload="none" />
       <button
         type="button"
         className={`bgm-toggle ${isMuted ? 'is-muted' : 'is-live'}`}

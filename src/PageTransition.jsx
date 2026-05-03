@@ -1,11 +1,12 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
 const defaultBlocks = ["#0d1a3a", "#1a6aff", "#7dd4fc"];
+const MotionDiv = motion.div;
 
 function DefaultTransition() {
   return defaultBlocks.map((color, i) => (
-    <motion.div
+    <MotionDiv
       key={i}
       style={{
         position: "fixed",
@@ -35,7 +36,7 @@ function AboutTransition() {
   ];
 
   return panels.map((panel, i) => (
-    <motion.div
+    <MotionDiv
       key={i}
       style={{
         position: "fixed",
@@ -71,7 +72,7 @@ function SocialsTransition() {
   ];
 
   return stripes.map((stripe, i) => (
-    <motion.div
+    <MotionDiv
       key={i}
       style={{
         position: "fixed",
@@ -85,8 +86,8 @@ function SocialsTransition() {
         transformOrigin: "top",
         pointerEvents: "none",
       }}
-      initial={{ y: -1200, opacity: 1 }}
-      animate={{ y: [-1200, 0, 0, 1200] }}
+      initial={{ y: "-120vh", opacity: 1 }}
+      animate={{ y: ["-120vh", "0vh", "0vh", "120vh"], opacity: [1, 1, 1, 0] }}
       transition={{
         duration: 0.56,
         delay: stripe.delay,
@@ -113,7 +114,7 @@ function ResumeTransition() {
   ];
 
   return cards.map((card, i) => (
-    <motion.div
+    <MotionDiv
       key={i}
       style={{
         position: "fixed",
@@ -127,8 +128,8 @@ function ResumeTransition() {
         boxShadow: card.color === "#ffffff" ? "10px 0 0 #d63232" : "none",
         pointerEvents: "none",
       }}
-      initial={{ x: -900, opacity: 1 }}
-      animate={{ x: [-900, 30, 0, 900] }}
+      initial={{ x: "-110vw", opacity: 1 }}
+      animate={{ x: ["-110vw", "3vw", "0vw", "120vw"], opacity: [1, 1, 1, 0] }}
       transition={{
         duration: 0.6,
         delay: card.delay,
@@ -141,20 +142,21 @@ function ResumeTransition() {
 
 export default function PageTransition({ children, variant = "default" }) {
   const location = useLocation();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div key={location.pathname} style={{ position: "relative" }}>
-        <TransitionOverlay variant={variant} />
-        <motion.div
-          initial={{ opacity: 0 }}
+      <MotionDiv key={location.pathname} style={{ position: "relative" }}>
+        {!prefersReducedMotion && <TransitionOverlay variant={variant} />}
+        <MotionDiv
+          initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, delay: 0.18 }}
+          exit={{ opacity: prefersReducedMotion ? 1 : 0 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.2, delay: prefersReducedMotion ? 0 : 0.18 }}
         >
           {children}
-        </motion.div>
-      </motion.div>
+        </MotionDiv>
+      </MotionDiv>
     </AnimatePresence>
   );
 }

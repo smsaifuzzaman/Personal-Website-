@@ -7,6 +7,7 @@ import bgVideo from "./assets/main1.mp4";
 import mainm from "./assets/mainm.jpeg";
 import mainm2 from "./assets/mainm2.jpeg";
 import mainf from "./assets/mainf.jpeg";
+import PersonaKeyHints from "./PersonaKeyHints";
 
 const SECTIONS = [
   {
@@ -74,11 +75,6 @@ export default function AboutMe() {
   }, []);
 
   useEffect(() => {
-    setActive(0);
-    setHovered(null);
-  }, []);
-
-  useEffect(() => {
     const onKey = (event) => {
       if (event.key === "ArrowUp") {
         event.preventDefault();
@@ -114,11 +110,9 @@ export default function AboutMe() {
 
   return (
     <div id="menu-screen">
-      <video src={bgVideo} autoPlay loop muted playsInline />
+      <video src={bgVideo} autoPlay loop muted playsInline preload="metadata" />
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@300;400;600&display=swap');
-
         .about-root {
           position: absolute;
           inset: 0;
@@ -542,12 +536,18 @@ export default function AboutMe() {
         </section>
       </div>
 
-      <div className={`about-footer${mounted ? " mounted" : ""}`}>
-        <div className="about-footer-row"><span className="about-footer-key">UP/DN</span><span>SELECT</span></div>
-        <div className="about-footer-row"><span className="about-footer-key">HOVER</span><span>HIGHLIGHT</span></div>
-        <div className="about-footer-row"><span className="about-footer-key">CLICK</span><span>SHOW DETAILS</span></div>
-        <div className="about-footer-row"><span className="about-footer-key">ESC</span><span>BACK</span></div>
-      </div>
+      <PersonaKeyHints
+        mounted={mounted}
+        rootClass="about-footer"
+        rowClass="about-footer-row"
+        keyClass="about-footer-key"
+        rows={[
+          { keyLabel: "UP/DN", label: "SELECT" },
+          { keyLabel: "HOVER", label: "HIGHLIGHT" },
+          { keyLabel: "CLICK", label: "SHOW DETAILS" },
+          { keyLabel: "ESC", label: "BACK" },
+        ]}
+      />
     </div>
   );
 }

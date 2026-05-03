@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import PersonaKeyHints from "./PersonaKeyHints";
+import { EXTERNAL_REL, openExternal } from "./linkUtils";
 
 const GITHUB_URL = "https://github.com/smsaifuzzaman";
 const SIDE_PROJECTS_URL = "https://drive.google.com/drive/folders/1REP326297IIXhDYN5WhhMiqPhfejwWtb?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto";
@@ -24,19 +26,19 @@ export default function P3Menu({ onNavigate }) {
   const [mounted, setMounted] = useState(false);
   const [animKey, setAnimKey] = useState(0);
 
-  const handleItemAction = (item) => {
+  const handleItemAction = useCallback((item) => {
     if (item.id === "github") {
-      window.open(GITHUB_URL, "_blank", "noopener,noreferrer");
+      openExternal(GITHUB_URL);
       return;
     }
 
     if (item.id === "sideproj") {
-      window.open(SIDE_PROJECTS_URL, "_blank", "noopener,noreferrer");
+      openExternal(SIDE_PROJECTS_URL);
       return;
     }
 
     onNavigate?.(item.page);
-  };
+  }, [onNavigate]);
 
   const activate = (idx) => {
     setActive(idx);
@@ -56,7 +58,7 @@ export default function P3Menu({ onNavigate }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active]);
+  }, [active, handleItemAction]);
 
   return (
     <>
@@ -260,7 +262,9 @@ export default function P3Menu({ onNavigate }) {
             return (
               <a
                 key={item.id}
-                href="#"
+                href={item.id === "github" ? GITHUB_URL : item.id === "sideproj" ? SIDE_PROJECTS_URL : `/${item.page}`}
+                target={item.id === "github" || item.id === "sideproj" ? "_blank" : undefined}
+                rel={item.id === "github" || item.id === "sideproj" ? EXTERNAL_REL : undefined}
                 className={`p3-row ${isActive ? "active" : ""} ${mounted ? "mounted" : ""}`}
                 style={{
                   marginRight: item.offsetX,
@@ -270,6 +274,7 @@ export default function P3Menu({ onNavigate }) {
                 onClick={(e) => { e.preventDefault(); handleItemAction(item); }}
                 onMouseEnter={() => activate(i)}
                 aria-current={isActive ? "page" : undefined}
+                aria-label={item.id === "github" || item.id === "sideproj" ? `${item.label}, opens in a new tab` : item.label}
               >
                 <div className="p3-glow" />
                 <div
@@ -314,10 +319,16 @@ export default function P3Menu({ onNavigate }) {
           })}
         </nav>
 
-        <div className={`p3-hint ${mounted ? "mounted" : ""}`}>
-          <div className="p3-hint-row"><span className="p3-hint-key">↑↓</span><span>NAVIGATE</span></div>
-          <div className="p3-hint-row"><span className="p3-hint-key">↵</span><span>CONFIRM</span></div>
-        </div>
+        <PersonaKeyHints
+          mounted={mounted}
+          rootClass="p3-hint"
+          rowClass="p3-hint-row"
+          keyClass="p3-hint-key"
+          rows={[
+            { keyLabel: "UP/DN", label: "NAVIGATE" },
+            { keyLabel: "ENTER", label: "CONFIRM" },
+          ]}
+        />
       </div>
     </>
   );
