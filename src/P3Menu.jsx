@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 const GITHUB_URL = "https://github.com/smsaifuzzaman";
+const SIDE_PROJECTS_URL = "https://drive.google.com/drive/folders/1REP326297IIXhDYN5WhhMiqPhfejwWtb?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto";
 
 const ITEMS = [
   { id: "about",   label: "ABOUT ME",      page: "about",   fontSize: 80, offsetX: 0,  offsetY: 0,  skew: -6,  skewY: 10  },
@@ -26,6 +27,11 @@ export default function P3Menu({ onNavigate }) {
   const handleItemAction = (item) => {
     if (item.id === "github") {
       window.open(GITHUB_URL, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    if (item.id === "sideproj") {
+      window.open(SIDE_PROJECTS_URL, "_blank", "noopener,noreferrer");
       return;
     }
 
