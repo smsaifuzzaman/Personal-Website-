@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
+import { Analytics } from '@vercel/analytics/react'
 import menuVideo from './assets/Mainn.mp4'
 import bgmTrack from './assets/bgm.mp3'
 import P3Menu from './P3Menu'
@@ -118,6 +119,7 @@ export default function App() {
         <span className="bgm-toggle-state">{isMuted ? 'OFF' : 'ON'}</span>
       </button>
       <AnimatedRoutes />
+      <Analytics />
     </>
   )
 }
